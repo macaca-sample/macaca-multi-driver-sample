@@ -19,8 +19,14 @@ describe('macaca mobile sample', function() {
 
   this.timeout(5 * 60 * 1000);
 
-  var driver1 = android_chrome_wd.initPromiseChain();
-  var driver2 = desktop_electron_wd.initPromiseChain();
+  var driver1 = android_chrome_wd.initPromiseChain({
+    host: 'localhost',
+    port: 3456
+  });
+  var driver2 = desktop_electron_wd.initPromiseChain({
+    host: 'localhost',
+    port: 3457
+  });
 
   before(function() {
     return driver2
@@ -28,9 +34,9 @@ describe('macaca mobile sample', function() {
   });
 
   after(function() {
-    return driver2
+    return driver1
       .sleep(1000)
-      .quit();
+      //.quit();
   });
 
   it('#0 should get url', function() {
@@ -50,7 +56,11 @@ describe('macaca mobile sample', function() {
         var arr = content.split(' ');
         var url = arr[arr.length - 1];
         console.log(`get url: ${url}`);
-        
+        driver2.quit();
+        return driver1
+          .initDriver()
+          .get(url)
+          .sleep(5000);
       })
       .sleep(5000);
   });
