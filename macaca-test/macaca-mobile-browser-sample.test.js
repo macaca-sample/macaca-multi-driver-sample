@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('macaca-utils');
+var webdriverClient = require('webdriver-client');
 
 var AndroidChromeOpts = {
   platformName: 'Android',
@@ -12,15 +13,22 @@ var ElectronOpts = {
   browserName: 'electron'
 };
 
-var android_chrome_wd = require('webdriver-client')(AndroidChromeOpts);
-var desktop_electron_wd = require('webdriver-client')(ElectronOpts);
+
+function initElectron() {
+  var electron_wd = webdriverClient(ElectronOpts);
+  return electron_wd.initPromiseChain();
+}
+
+function initAndroidChrome() {
+  var android_chrome_wd = webdriverClient(AndroidChromeOpts);
+  return android_chrome_wd.initPromiseChain();
+}
 
 describe('macaca mobile sample', function() {
 
   this.timeout(5 * 60 * 1000);
 
-  var driver1 = android_chrome_wd.initPromiseChain();
-  var driver2 = desktop_electron_wd.initPromiseChain();
+  var driver2 = initElectron();
 
   before(function() {
     return driver2
@@ -29,14 +37,13 @@ describe('macaca mobile sample', function() {
 
   after(function() {
     return driver2
-      .sleep(1000)
-      .quit();
+      //.quit();
   });
 
   it('#0 should get url', function() {
     return driver2
       .setWindowSize(800, 600)
-      .get('https://www.weibo.com')
+      .get('http://www.weibo.com')
       .sleep(5000)
       .elementByCss('input.W_input')
       .sendKeys('达峰的夏天')
@@ -50,9 +57,13 @@ describe('macaca mobile sample', function() {
         var arr = content.split(' ');
         var url = arr[arr.length - 1];
         console.log(`get url: ${url}`);
-        
-      })
-      .sleep(5000);
+
+        const driver1 = initAndroidChrome();
+        return driver1
+          .initDriver()
+          .get(url)
+          .sleep(5000);
+      });
   });
 
 });

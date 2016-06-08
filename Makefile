@@ -7,7 +7,7 @@ install:
 	${npm_bin}/macaca install android
 	${npm_bin}/macaca install electron
 	${npm_bin}/macaca doctor
-test:
+test: install
 	${npm_bin}/macaca run --verbose -d ./macaca-test/macaca-mobile-browser-sample.test.js
 jshint:
 	@${npm_bin}/jshint .
