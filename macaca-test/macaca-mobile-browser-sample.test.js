@@ -37,7 +37,7 @@ describe('macaca mobile sample', function() {
 
   after(function() {
     return driver2
-      .quit();
+      //.quit();
   });
 
   it('#0 should get url', function() {
@@ -57,6 +57,7 @@ describe('macaca mobile sample', function() {
         var arr = content.split(' ');
         var url = arr[arr.length - 1];
         console.log(`get url: ${url}`);
+
         const driver1 = initAndroidChrome();
         return driver1
           .initDriver()
