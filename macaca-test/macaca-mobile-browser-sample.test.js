@@ -13,35 +13,30 @@ var ElectronOpts = {
   browserName: 'electron'
 };
 
-
-function initElectron() {
-  var electron_wd = webdriverClient(ElectronOpts);
-  return electron_wd.initPromiseChain();
-}
-
-function initAndroidChrome() {
-  var android_chrome_wd = webdriverClient(AndroidChromeOpts);
-  return android_chrome_wd.initPromiseChain();
-}
+var android = webdriverClient(AndroidChromeOpts);
+var electron = webdriverClient(ElectronOpts);
 
 describe('macaca mobile sample', function() {
 
   this.timeout(5 * 60 * 1000);
 
-  var driver2 = initElectron();
+  var driver1 = electron.initPromiseChain();
+  var driver2 = android.initPromiseChain();
 
   before(function() {
-    return driver2
+    return driver1
       .initDriver();
   });
 
   after(function() {
-    return driver2
-      .quit();
+    return Promise.all([
+      driver1.quit(),
+      driver2.quit()
+    ]);
   });
 
   it('#0 should get url', function() {
-    return driver2
+    return driver1
       .setWindowSize(800, 600)
       .get('http://www.weibo.com')
       .sleep(5000)
@@ -57,8 +52,7 @@ describe('macaca mobile sample', function() {
         var arr = content.split(' ');
         var url = arr[arr.length - 1];
         console.log(`get url: ${url}`);
-        const driver1 = initAndroidChrome();
-        return driver1
+        return driver2
           .initDriver()
           .get(url)
           .sleep(5000);
