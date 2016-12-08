@@ -7,5 +7,6 @@ examples/
 .jshintrc
 .jshintignore
 coverage/
-.sw*
 logs/
+*.sw*
+*.un~
